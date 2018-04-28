@@ -500,12 +500,50 @@ def bot(op):
                         cl.sendMessage(op.param1,"Hello all fams..😜" + str(ginfo.name))
 
         if op.type == 13:
+            print op.param1
+            print op.param2
+            print op.param3
             if mid in op.param3:
+                G = cl.getGroup(op.param1)
                 if wait["autoJoin"] == True:
-                    if op.param2 not in Bots and op.param2 not in owner and op.param2 not in admin and op.param2 not in staff:
+                    if wait["autoCancel"]["on"] == True:
+                        if len(G.members) <= wait["autoCancel"]["members"]:
+                            cl.rejectGroupInvitation(op.param1)
+                        else:
+                            cl.acceptGroupInvitation(op.param1)
+                    else:
                         cl.acceptGroupInvitation(op.param1)
-                        ginfo = cl.getGroup(op.param1)
-                        cl.sendMessage(op.param1,"Hello all fams..😜" +str(ginfo.name))
+                elif wait["autoCancel"]["on"] == True:
+                    if len(G.members) <= wait["autoCancel"]["members"]:
+                        cl.rejectGroupInvitation(op.param1)
+            else:
+                Inviter = op.param3.replace("",',')
+                InviterX = Inviter.split(",")
+                matched_list = []
+                for tag in wait["blacklist"]:
+                    matched_list+=filter(lambda str: str == tag, InviterX)
+                if matched_list == []:
+                    pass
+                else:
+                    cl.cancelGroupInvitation(op.param1, matched_list)
+                    
+            if mid in op.param3:
+                if wait["AutoJoin"] == True:
+                    cl.acceptGroupInvitation(op.param1)
+                else:
+		    cl.rejectGroupInvitation(op.param1)
+	    else:
+                if wait["AutoCancel"] == True:
+		    if op.param3 in admin:
+                        pass
+		    else:
+                        cl.cancelGroupInvitation(op.param1, [op.param3])
+                else:
+		    if op.param3 in wait["blacklist"]:
+                        cl.cancelGroupInvitation(op.param1, [op.param3])
+                        cl.sendText(op.param1, "Itu kicker jgn di invite!")
+		    else:
+                        pass
                     else:
                         cl.acceptGroupInvitation(op.param1)
                         ginfo = cl.getGroup(op.param1)
